@@ -1,0 +1,27 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: shouldreadiness
+spec:
+  crd:
+    spec:
+      names:
+        kind: shouldreadiness
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package shouldreadiness
+
+        violation[{"msg": msg}] {
+          #object.get(input.review.object.spec.template.spec.containers[_], ["readinessProbe"], null)
+          container := input.review.object.spec.containers[_]
+          not container["readinessProbe"]
+          msg := sprintf("deployment %v does not have readiness", [input.review.object.metadata.name])
+          #msg := sprintf("deployment does not have readiness", [input.review.object.spec.replicas])
+        }
+        #violation[{"msg": msg}] {
+        #  #count(input.request.spec.template.spec.containers[_].readinessProbe) > 1
+        #  #count(input.request.object.spec.template.spec.containers[_].readinessProbe) == 0
+        #  count(input.review.spec.template.spec.containers[_].readinessProbe) == 0
+        #  msg := sprintf("deployment <%v> does not have readiness", [input.review.metadata.name])
+        #}

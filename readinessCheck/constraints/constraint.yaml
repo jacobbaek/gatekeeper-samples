@@ -1,0 +1,14 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: shouldreadiness
+metadata:
+  name: readiness-check
+spec:
+  #enforcementAction: warn # deny (default) https://open-policy-agent.github.io/gatekeeper/website/docs/violations
+  enforcementAction: deny
+  match:
+    excludedNamespaces:
+    - kube-system
+    - gatekeeper-system
+    kinds:
+      - apiGroups: ["apps/v1"]
+        kinds: ["Deployment"]

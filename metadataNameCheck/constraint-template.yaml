@@ -1,0 +1,25 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: restrictname
+spec:
+  crd:
+    spec:
+      names:
+        kind: restrictname
+      validation:
+        openAPIV3Schema:
+          properties:
+            denyname:
+              type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package restrictname
+
+        violation[{"msg": msg}] {
+          objname := input.request.object.metadata.name
+          denyname := input.parameters.denyname
+          startswith(objname, denyname)
+          msg := sprintf("container <%v> uses not allowed deployment name : <%v>", [objname, denyname])
+        }

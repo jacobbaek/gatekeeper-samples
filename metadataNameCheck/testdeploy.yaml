@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apptest-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: apptest
+  template:
+    metadata:
+      labels:
+        app: apptest
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15.4
+        ports:
+        - containerPort: 80
+

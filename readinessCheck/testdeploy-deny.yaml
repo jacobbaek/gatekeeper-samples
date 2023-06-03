@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testapp-deny-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testapp-deny
+  template:
+    metadata:
+      labels:
+        app: testapp-deny
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15.4
+        ports:
+        - containerPort: 80
