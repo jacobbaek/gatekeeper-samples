@@ -1,0 +1,23 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8snopdb
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sNoPDB
+      validation:
+        openAPIV3Schema:
+          properties:
+            message:
+              type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package K8sNoPDB
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "PodDisruptionBudget"
+          msg := "PDB(Pod Disruption Budget) can not create"
+        }
